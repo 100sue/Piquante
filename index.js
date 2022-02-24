@@ -3,8 +3,24 @@ require("dotenv").config()
 const express = require("express")
 const app = express()
 const cors = require("cors")
-const bodyParser = require("body-parser")
 const port = 3000
+const multer = require("multer")
+
+const storage = multer.diskStorage ({
+    destination: "images/",
+    filename: function(req, file, cb) {
+        cb(null, makeFilname(req,file))
+    }
+
+})
+
+function makeFilname(file){
+    const fileName = `${Date.now()}-${file.originalname}`.replace(/\s/g,"-")
+    file.fileName = fileName
+    return fileName
+}
+
+const upload = multer({storage: storage})
 
 
 // Connection to database :
@@ -18,18 +34,15 @@ const {getSauces, createSauce} = require("./controllers/sauces")
 // Middlewares :
 app.use(cors())
 app.use(express.json())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
 
 const { authenticateUser } = require("./middleware/auth")
-const multer = require("multer")
-const upload = multer().single("image")
+
 
 // Routes :
 app.post("/api/auth/signup", createUser)
 app.post("/api/auth/login", logUser)
 app.get("/api/sauces", authenticateUser, getSauces)
-app.post("/api/sauces", authenticateUser, upload, createSauce)
+app.post("/api/sauces", authenticateUser, upload.single("image"), createSauce)
 app.get("/", (req, res) => res.send("hello"))
 
 
