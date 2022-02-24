@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
+
 
 const productSchema = new mongoose.Schema({
     userId: String,
@@ -18,27 +18,17 @@ const Product = mongoose.model("Product", productSchema)
 
 
 function getSauces(req,res) {
-    const header = req.header("Authorization")
-    if (header == null) return res.status(403).send({message: "Invalid"})
+        console.log("le token a été validé, bienvenue sur getSauces")
+        Product.find({}).then(products => res.send(products))
 
-    const token = header.split(" ")[1]
-    if (token == null) return res.status(403).send({message: "Token cannot be null"})
-
-    jwt.verify(token, process.env.JWT_PASSWORD, (err,decoded) => handleToken(err,decoded,res))
-
-}
-
-
-function handleToken(err,decoded,res) {
-    if (err) res.status(403).send({message: "Token Invalid" + err})
-    else {
-        res.send({message: [{sauces: "sauce1"},{sauce:"sauce2"}]})
     }
 
 
-}
-
 function createSauce(req,res) {
+    const name = req.body.name
+    const manufacturer = req.body.manufacturer
+    console.log({body: req.body})
+    
     const product = new Product ({
         userId: String,
         name: String,
@@ -51,9 +41,9 @@ function createSauce(req,res) {
         dislikes: Number,
         usersLiked: [String],
         usersDisliked: [String]
-
     })
+    product.save().then((res)=> console.log("Produit enregistré",res)).catch(console.error)
 
 }
 
-module.exports = { getSauces, createSauce }
+module.exports = { getSauces, createSauce}
