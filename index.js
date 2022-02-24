@@ -1,51 +1,21 @@
-require("dotenv").config()
-
-const express = require("express")
-const app = express()
-const cors = require("cors")
+const { app, express } = require("./server")
+const { saucesRouter } = require("./routers/sauces.router")
+const { authRouter } = require("./routers/auth.router")
 const port = 3000
-const multer = require("multer")
+const path = require("path")
+const bodyParser = require("body-parser")
 
-const storage = multer.diskStorage ({
-    destination: "images/",
-    filename: function(req, file, cb) {
-        cb(null, makeFilname(req,file))
-    }
-
-})
-
-function makeFilname(file){
-    const fileName = `${Date.now()}-${file.originalname}`.replace(/\s/g,"-")
-    file.fileName = fileName
-    return fileName
-}
-
-const upload = multer({storage: storage})
-
-
-// Connection to database :
+// Connection to database
 require("./mongo")
 
+// Middleware
+app.use(bodyParser.json())
+app.use("/api/sauces", saucesRouter)
+app.use("/api/auth", authRouter)
 
-// Controllers :
-const {createUser,logUser} = require("./controllers/users")
-const {getSauces, createSauce} = require("./controllers/sauces")
+//Routes
+app.get("/", (req, res) => res.send("Hello World!"))
 
-// Middlewares :
-app.use(cors())
-app.use(express.json())
-
-const { authenticateUser } = require("./middleware/auth")
-
-
-// Routes :
-app.post("/api/auth/signup", createUser)
-app.post("/api/auth/login", logUser)
-app.get("/api/sauces", authenticateUser, getSauces)
-app.post("/api/sauces", authenticateUser, upload.single("image"), createSauce)
-app.get("/", (req, res) => res.send("hello"))
-
-
-// Listen :
-app.listen(port, () => console.log("listenning on port" + port ))
-
+// Listen
+app.use("/images", express.static(path.join(__dirname, "images")))
+app.listen(port, () => console.log("Listening on port " + port))
