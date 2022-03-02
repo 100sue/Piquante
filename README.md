@@ -32,7 +32,24 @@ Nous utilisons node.js pour construire le backend et, ainsi ajouter les modules 
 
 Le Frontend (développé à l'aide d'Angular) est fourni dans le projet (repo "ici")
 
+Pour exécuter le frontend de l'application :
+
+    Ouvrez un second terminal et rendez-vous dans "front"
+    Exécutez "npm install"
+    Exécutez "npm run start" et laissez le terminal ouvert
+
+Et voilà ! Rendez-vous sur http://127.0.0.1:8081/login. Vous pouvez vous inscrire, vous connecter, publier une sauce, modifier une sauce, supprimer une sauce, liker une sauce, vous déconnecter, etc.
+
+
 ## Back-end : ##
+
+Pour exécuter le backend de l'application :
+
+    Ouvrez un premier terminal et rendez-vous dans "back"
+    Exécutez "npm install"
+    Exécutez "node server" et laissez le terminal ouvert
+    Vérifiez qu'un message affiche "MongoDB connecté"
+
 
 Les principaux modules de node.js utilisés dans ce projet :
 
